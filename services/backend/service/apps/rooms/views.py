@@ -45,6 +45,12 @@ class RentCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = serializers.RentCreateSerializers
 
+    def get_object(self):
+        return get_object_or_404(
+            Room,
+            pk=self.kwargs['room']
+        )
+
 
 class RentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]

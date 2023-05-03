@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from django.db import transaction
 from apps.user import serializers as user_serializers
 from apps.models import Rent, Room
+from .exeptions import RentTimeExeptions
 
 
 class RoomSerializers(serializers.ModelSerializer):
@@ -56,17 +58,23 @@ class RentCreateSerializers(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        room = data.get('room')
-        time_start = data.get('time_start')
-        time_end = data.get('time_end')
 
         rents = Rent.objects.filter(
-            room=room,
-            time_start__lt=time_end,
-            time_end__gt=time_start,
+            room=data.get('room'),
+            time_start__lte=data.get('time_start'),
+            time_end__gte=data.get('time_end'),
         )
-
         if rents.exists():
-            raise serializers.ValidationError('This time range is already reserved for this room')
+            raise RentTimeExeptions()
 
         return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+
+        room = validated_data.get('room')
+        return room.rents.create(
+            user=self.context['request'].user,
+            time_start=validated_data.get('time_start'),
+            time_end=validated_data.get('time_end')
+        )

@@ -15,4 +15,5 @@ class RentInlines(admin.TabularInline):
 
     autocomplete_fields = (
         'room',
+        'user',
     )

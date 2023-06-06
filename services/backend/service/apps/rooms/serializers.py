@@ -24,27 +24,11 @@ class RentSerializers(serializers.ModelSerializer):
         model = Rent
         fields = (
             'uuid',
-            'room',
             'user',
             'time_start',
             'time_end',
+            'room'
         )
-
-    def validate(self, data):
-        room = data.get('room')
-        time_start = data.get('time_start')
-        time_end = data.get('time_end')
-
-        rents = Rent.objects.filter(
-            room=room,
-            time_start__lt=time_end,
-            time_end__gt=time_start,
-        )
-
-        if rents.exists():
-            raise serializers.ValidationError('This time range is already reserved for this room')
-
-        return data
 
 
 class RentCreateSerializers(serializers.ModelSerializer):

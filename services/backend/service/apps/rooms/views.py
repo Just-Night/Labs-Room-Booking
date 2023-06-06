@@ -37,8 +37,7 @@ class RoomRentsAPIView(generics.ListAPIView):
     serializer_class = serializers.RentSerializers
 
     def get_queryset(self):
-        room = get_object_or_404(Room, pk=self.kwargs['pk'])
-        return room.rents.all()
+        return Rent.objects.filter(room_id=self.kwargs.get('pk'))
 
 
 class RentCreateAPIView(generics.CreateAPIView):

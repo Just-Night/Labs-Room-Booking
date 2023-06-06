@@ -17,7 +17,7 @@ class RoomSerializers(serializers.ModelSerializer):
 
 
 class RentSerializers(serializers.ModelSerializer):
-    room = RoomSerializers()
+    room = RoomSerializers(read_only=True)
     user = user_serializers.UserSerializers(read_only=True)
 
     class Meta:
